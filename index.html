@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>World War II — Learn & Explore</title>
+  <meta name="description" content="A student-friendly, single‑page World War II information website with timeline, key events, theaters, technology, and aftermath." />
+  <link rel="icon" href="data:," />
+  <style>
+    :root {
+      --bg: #0b1220;
+      --bg-soft: #111a2e;
+      --text: #e6edf6;
+      --muted: #9fb0ca;
+      --brand: #6aa9ff;
+      --brand-2: #75e0a6;
+      --card: #0f172a;
+      --border: #1e293b;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+    }
+    [data-theme="light"] {
+      --bg: #f7fafc;
+      --bg-soft: #ffffff;
+      --text: #0b1220;
+      --muted: #49566c;
+      --brand: #2257f2;
+      --brand-2: #0a9d57;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --shadow: 0 8px 24px rgba(2,6,23,.08);
+    }
+    html, body { height: 100%; }
+    body {
+      margin: 0; font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--text); background: radial-gradient(1200px 800px at 80% -20%, rgba(117,224,166,.08), transparent 60%),
+               radial-gradient(900px 700px at -10% 10%, rgba(106,169,255,.12), transparent 60%),
+               var(--bg);
+    }
+    * { box-sizing: border-box; }
+    a { color: var(--brand); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    
+    /* Layout */
+    .container { width: min(1200px, 92vw); margin-inline: auto; }
+    header.nav {
+      position: sticky; top: 0; z-index: 50; backdrop-filter: blur(8px);
+      background: color-mix(in oklab, var(--bg) 86%, transparent);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-inner { display: flex; gap: 16px; align-items: center; padding: 12px 0; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 800; letter-spacing: .3px; }
+    .logo-badge {
+      inline-size: 36px; block-size: 36px; border-radius: 12px; display: grid; place-items: center;
+      background: linear-gradient(135deg, var(--brand), var(--brand-2)); color: #001226; font-weight: 900; box-shadow: var(--shadow);
+    }
+    nav.menu { margin-left: auto; display: flex; flex-wrap: wrap; gap: 8px; }
+    nav.menu a { padding: 8px 12px; border-radius: 999px; border: 1px solid transparent; }
+    nav.menu a:hover { border-color: var(--border); background: color-mix(in oklab, var(--bg-soft) 82%, transparent); text-decoration: none; }
+    .theme-toggle { border: 1px solid var(--border); background: var(--bg-soft); color: var(--text); padding: 8px 12px; border-radius: 999px; cursor: pointer; }
+
+    /* Hero */
+    .hero { padding: 48px 0 28px; }
+    .hero-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 28px; align-items: center; }
+    .hero h1 { font-size: clamp(32px, 3.8vw, 56px); line-height: 1.1; margin: 0 0 12px; }
+    .hero p { margin: 0; color: var(--muted); }
+    .badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 10px; border: 1px dashed var(--border); border-radius: 999px; color: var(--muted); font-size: 14px; }
+    .stat-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 18px; }
+    .stat { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 12px; box-shadow: var(--shadow); }
+    .stat .k { font-weight: 800; font-size: 22px; }
+    .stat .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .hero-art { aspect-ratio: 4/3; border-radius: 18px; background: linear-gradient(135deg, color-mix(in oklab, var(--brand) 40%, transparent), color-mix(in oklab, var(--brand-2) 18%, transparent));
+      display: grid; place-items: center; border: 1px solid var(--border); position: relative; overflow: hidden; }
+    .hero-art svg { width: 90%; height: auto; opacity: .9; }
+
+    /* Sections */
+    section { padding: 40px 0; scroll-margin-top: 80px; }
+    h2 { font-size: clamp(22px, 2.4vw, 34px); margin: 0 0 12px; }
+    .lead { color: var(--muted); margin-top: 0; }
+
+    .grid { display: grid; gap: 16px; }
+    .grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+    .grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); }
+
+    /* Timeline */
+    .timeline { position: relative; }
+    .timeline::before { content: ""; position: absolute; inset-inline-start: 16px; top: 4px; bottom: 4px; width: 3px; background: linear-gradient(var(--brand), var(--brand-2)); border-radius: 2px; }
+    .t-item { position: relative; padding-left: 48px; }
+    .t-item + .t-item { margin-top: 14px; }
+    .t-item .dot { position: absolute; left: 8px; top: .6em; width: 18px; height: 18px; border-radius: 50%; background: var(--bg); border: 3px solid var(--brand); box-shadow: var(--shadow); }
+    .t-item time { font-weight: 700; }
+    .filter-row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .chip { padding: 6px 10px; border-radius: 999px; border: 1px solid var(--border); cursor: pointer; user-select: none; }
+    .chip.active { background: color-mix(in oklab, var(--brand) 30%, var(--card)); border-color: color-mix(in oklab, var(--brand) 60%, var(--border)); }
+
+    /* Footer */
+    footer { padding: 40px 0 60px; border-top: 1px solid var(--border); color: var(--muted); }
+    .sources summary { cursor: pointer; }
+
+    /* Small screens */
+    @media (max-width: 900px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .grid.cols-3 { grid-template-columns: 1fr; }
+      .grid.cols-2 { grid-template-columns: 1fr; }
+      nav.menu { display: none; }
+    }
+
+    /* Print */
+    @media print {
+      header.nav, .theme-toggle, #toTop { display: none !important; }
+      body { background: #fff; color: #000; }
+      .card, .stat { box-shadow: none; }
+    }
+
+    /* Utilities */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    #toTop { position: fixed; right: 16px; bottom: 16px; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--border); background: var(--bg-soft); box-shadow: var(--shadow); cursor: pointer; display: none; }
+  </style>
+</head>
+<body>
+  <a href="#main" class="sr-only">Skip to content</a>
+  <header class="nav">
+    <div class="container nav-inner">
+      <div class="logo" aria-label="Site logo">
+        <span class="logo-badge" aria-hidden="true">WW2</span>
+        <span>World War II — Learn & Explore</span>
+      </div>
+      <nav class="menu" aria-label="Primary">
+        <a href="#overview">Overview</a>
+        <a href="#timeline">Timeline</a>
+        <a href="#theaters">Theaters</a>
+        <a href="#events">Key Events</a>
+        <a href="#technology">Technology</a>
+        <a href="#aftermath">Aftermath</a>
+        <a href="#sources">Sources</a>
+      </nav>
+      <button class="theme-toggle" id="themeBtn" title="Toggle theme" aria-pressed="false">Light/Dark</button>
+    </div>
+  </header>
+
+  <main id="main" class="container">
+    <!-- Hero -->
+    <section class="hero" id="overview">
+      <div class="hero-grid">
+        <div>
+          <span class="badge">1939–1945 • Global conflict • Civilians and soldiers</span>
+          <h1>World War II: What Happened, Where, and Why It Matters</h1>
+          <p>World War II (1939–1945) was a global conflict involving dozens of nations across Europe, Africa, Asia, and the Pacific. It reshaped borders, accelerated technology, caused immense human suffering, and set the stage for today’s world order.</p>
+          <div class="stat-row" role="group" aria-label="At‑a‑glance">
+            <div class="stat"><div class="k">1939</div><div class="label">War begins</div></div>
+            <div class="stat"><div class="k">1945</div><div class="label">War ends</div></div>
+            <div class="stat"><div class="k">Global</div><div class="label">Multiple fronts</div></div>
+          </div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <!-- Decorative SVG map-ish motif -->
+          <svg viewBox="0 0 600 450" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Abstract world map">
+            <defs>
+              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="currentColor" stop-opacity=".25"/>
+                <stop offset="1" stop-color="currentColor" stop-opacity=".05"/>
+              </linearGradient>
+            </defs>
+            <g stroke="currentColor" stroke-opacity=".3">
+              <circle cx="300" cy="225" r="200" />
+              <circle cx="300" cy="225" r="140" />
+              <circle cx="300" cy="225" r="80" />
+              <path d="M50 220h500M300 30v390M120 110l360 230M120 340l360-230"/>
+            </g>
+            <g fill="currentColor" fill-opacity=".12">
+              <rect x="170" y="160" width="90" height="60" rx="10" />
+              <rect x="350" y="220" width="110" height="70" rx="10" />
+              <rect x="250" y="300" width="60" height="40" rx="8" />
+            </g>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline -->
+    <section id="timeline">
+      <h2>Timeline</h2>
+      <p class="lead">Select a tag to focus the timeline by region. Use it as a quick guide; for deeper reading explore the sections below.</p>
+
+      <div class="filter-row" role="toolbar" aria-label="Timeline filters">
+        <button class="chip active" data-filter="all" aria-pressed="true">All</button>
+        <button class="chip" data-filter="europe">Europe</button>
+        <button class="chip" data-filter="pacific">Pacific</button>
+        <button class="chip" data-filter="africa">Africa & Middle East</button>
+        <button class="chip" data-filter="asia">Asia</button>
+        <label class="chip" style="cursor:text">
+          <span class="sr-only">Search events</span>
+          <input id="searchBox" type="search" placeholder="Search…" style="background:transparent;border:none;color:var(--text);outline:none;width:10ch" />
+        </label>
+      </div>
+
+      <div class="timeline" id="timelineList" aria-live="polite">
+        <article class="t-item card" data-tags="europe">
+          <div class="dot" aria-hidden="true"></div>
+          <time datetime="1939-09">Sep 1939</time>
+          <h3 style="margin:.2em 0 .3em">Germany invades Poland</h3>
+          <p>The United Kingdom and France declare war on Germany, marking the official start of WWII in Europe.</p>
+        </article>
+        <article class="t-item card" data-tags="europe">
+          <div class="dot"></div>
+          <time datetime="1940-05">May–Jun 1940</time>
+          <h3>Fall of France & Dunkirk evacuation</h3>
+          <p>Rapid offensive leads to occupation of France; Allied troops evacuate from Dunkirk.</p>
+        </article>
+        <article class="t-item card" data-tags="europe">
+          <div class="dot"></div>
+          <time datetime="1941-06">Jun 1941</time>
+          <h3>Operation Barbarossa</h3>
+          <p>Germany invades the Soviet Union, opening the Eastern Front.</p>
+        </article>
+        <article class="t-item card" data-tags="pacific asia">
+          <div class="dot"></div>
+          <time datetime="1941-12">Dec 7–8, 1941</time>
+          <h3>Pearl Harbor & Asia-Pacific offensives</h3>
+          <p>Japan attacks Pearl Harbor; the United States enters the war. Japan expands across Southeast Asia and the Pacific.</p>
+        </article>
+        <article class="t-item card" data-tags="pacific">
+          <div class="dot"></div>
+          <time datetime="1942-06">Jun 1942</time>
+          <h3>Battle of Midway</h3>
+          <p>A decisive U.S. naval victory that shifts momentum in the Pacific.</p>
+        </article>
+        <article class="t-item card" data-tags="africa europe">
+          <div class="dot"></div>
+          <time datetime="1942-10">Oct–Nov 1942</time>
+          <h3>El Alamein & North Africa</h3>
+          <p>Allied victories in North Africa push Axis forces westward.</p>
+        </article>
+        <article class="t-item card" data-tags="europe">
+          <div class="dot"></div>
+          <time datetime="1942-11">Nov 1942–Feb 1943</time>
+          <h3>Stalingrad</h3>
+          <p>Turning point on the Eastern Front; German Sixth Army surrenders.</p>
+        </article>
+        <article class="t-item card" data-tags="europe">
+          <div class="dot"></div>
+          <time datetime="1944-06">Jun 6, 1944</time>
+          <h3>D‑Day (Normandy landings)</h3>
+          <p>Allied forces land in France, opening a Western Front.</p>
+        </article>
+        <article class="t-item card" data-tags="pacific asia">
+          <div class="dot"></div>
+          <time datetime="1945-08">Aug 1945</time>
+          <h3>Atomic bombings & Japan’s surrender</h3>
+          <p>Bombings of Hiroshima and Nagasaki precede Japan’s surrender; WWII ends.</p>
+        </article>
+        <article class="t-item card" data-tags="europe">
+          <div class="dot"></div>
+          <time datetime="1945-05">May 8, 1945</time>
+          <h3>Victory in Europe (V‑E Day)</h3>
+          <p>Germany surrenders; war in Europe ends.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Theaters -->
+    <section id="theaters">
+      <h2>Theaters of War</h2>
+      <p class="lead">WWII spanned multiple regions. Each theater had unique geography, strategies, and challenges.</p>
+      <div class="grid cols-3">
+        <article class="card">
+          <h3>European Theater</h3>
+          <p>From the invasion of Poland to the fall of Berlin, this theater saw massive land battles, strategic bombing, and resistance movements across occupied countries.</p>
+          <ul>
+            <li>Western & Eastern fronts</li>
+            <li>Strategic bombing campaigns</li>
+            <li>Allied liberation of Western Europe</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Pacific Theater</h3>
+          <p>Dominated by naval and air power across vast distances. Island‑hopping campaigns aimed to reach Japan’s home islands.</p>
+          <ul>
+            <li>Carrier warfare and submarines</li>
+            <li>Island campaigns: Guadalcanal, Iwo Jima, Okinawa</li>
+            <li>Intense logistics over oceanic distances</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Mediterranean & North Africa</h3>
+          <p>Control of sea lanes and the Suez Canal made this theater strategically vital. Desert warfare posed extreme supply challenges.</p>
+          <ul>
+            <li>Operations in Libya, Egypt, Tunisia, Italy</li>
+            <li>Amphibious landings in Sicily & mainland Italy</li>
+            <li>Axis pushed back after El Alamein</li>
+          </ul>
+        </article>
+      </div>
+    </section>
+
+    <!-- Key Events -->
+    <section id="events">
+      <h2>Key Events & Concepts</h2>
+      <p class="lead">A non‑exhaustive list of moments, policies, and ideas that shaped the conflict.</p>
+      <div class="grid cols-3">
+        <article class="card">
+          <h3>Alliances</h3>
+          <p><strong>Allies:</strong> UK, USSR, USA, China, and others. <strong>Axis:</strong> Germany, Italy, Japan, among others. Neutral and occupied nations played crucial roles.</p>
+        </article>
+        <article class="card">
+          <h3>Home Fronts</h3>
+          <p>Rationing, war production, civil defense, and propaganda mobilized entire societies, not just militaries.</p>
+        </article>
+        <article class="card">
+          <h3>Holocaust</h3>
+          <p>The Nazi regime’s genocide murdered six million Jews and millions of others, including Roma, disabled people, and political prisoners.</p>
+        </article>
+        <article class="card">
+          <h3>Naval & Air Power</h3>
+          <p>Aircraft carriers, radar, codebreaking, and strategic bombing changed how wars were fought at sea and in the air.</p>
+        </article>
+        <article class="card">
+          <h3>Eastern Front</h3>
+          <p>Some of the war’s largest and deadliest battles occurred between Germany and the Soviet Union, including Leningrad, Stalingrad, and Kursk.</p>
+        </article>
+        <article class="card">
+          <h3>Resistance & Intelligence</h3>
+          <p>Underground movements sabotaged occupiers; intelligence breakthroughs like Enigma decryption shaped outcomes.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Technology -->
+    <section id="technology">
+      <h2>Technology & Innovation</h2>
+      <p class="lead">WWII accelerated advances with lasting civilian impact.</p>
+      <div class="grid cols-2">
+        <article class="card">
+          <h3>Examples</h3>
+          <ul>
+            <li>Radar and sonar for detection</li>
+            <li>Penicillin mass production</li>
+            <li>Jet aircraft and rocketry</li>
+            <li>Computing (electromechanical and early electronic)</li>
+            <li>Logistics: standardized containers & supply chains</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Ethics & Consequences</h3>
+          <p>Scientific breakthroughs brought both lifesaving medicine and weapons of unprecedented power, raising questions about responsibility and control that persist today.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Aftermath -->
+    <section id="aftermath">
+      <h2>Aftermath & Legacy</h2>
+      <div class="grid cols-2">
+        <article class="card">
+          <h3>Global Changes</h3>
+          <ul>
+            <li>United Nations founded to promote international cooperation</li>
+            <li>Cold War tensions emerge between former Allies</li>
+            <li>Decolonization movements spread across Asia and Africa</li>
+            <li>Trials prosecute major war criminals</li>
+          </ul>
+        </article>
+        <article class="card">
+          <h3>Remembering</h3>
+          <p>Museums, memorials, archives, and education programs preserve evidence and stories, honoring victims and veterans while helping new generations understand the stakes.</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Sources -->
+    <section id="sources" class="sources">
+      <h2>Sources & Further Study</h2>
+      <p class="lead">Always consult multiple sources. Start with overviews, then dive into specialized books, archives, and oral histories.</p>
+      <details class="card">
+        <summary><strong>Suggested types of sources</strong> (click to expand)</summary>
+        <ul>
+          <li>Reference books & scholarly overviews (e.g., comprehensive WWII histories)</li>
+          <li>Primary sources: letters, diaries, speeches, government documents</li>
+          <li>Museum and archive websites with digitized collections</li>
+          <li>Peer‑reviewed journals and university courses</li>
+        </ul>
+      </details>
+      <p style="color:var(--muted);font-size:.95rem">Note: This page is a student‑friendly summary. For assignments, add citations to the exact sources you used.</p>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© <span id="year"></span> WWII Learning Page. Built as an educational demo.</p>
+    </div>
+  </footer>
+
+  <button id="toTop" aria-label="Back to top">↑ Top</button>
+
+  <script>
+    // Theme toggle (light/dark)
+    const root = document.documentElement;
+    const themeBtn = document.getElementById('themeBtn');
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) document.documentElement.setAttribute('data-theme', savedTheme);
+    themeBtn.addEventListener('click', () => {
+      const current = root.getAttribute('data-theme');
+      const next = current === 'light' ? '' : 'light';
+      if (next) root.setAttribute('data-theme', next); else root.removeAttribute('data-theme');
+      localStorage.setItem('theme', next);
+      themeBtn.setAttribute('aria-pressed', next === 'light');
+    });
+
+    // Timeline filter & search
+    const chips = [...document.querySelectorAll('.chip')];
+    const items = [...document.querySelectorAll('.t-item')];
+    const searchBox = document.getElementById('searchBox');
+
+    function applyFilters() {
+      const active = document.querySelector('.chip.active')?.dataset.filter || 'all';
+      const q = (searchBox.value || '').trim().toLowerCase();
+      items.forEach(el => {
+        const matchesTag = active === 'all' || el.dataset.tags.includes(active);
+        const matchesText = !q || el.textContent.toLowerCase().includes(q);
+        el.style.display = matchesTag && matchesText ? '' : 'none';
+      });
+    }
+
+    chips.forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (!btn.dataset.filter) return; // ignore search "chip" label
+        chips.forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        chips.forEach(c => c.setAttribute('aria-pressed', c.classList.contains('active')));
+        applyFilters();
+      });
+    });
+
+    searchBox.addEventListener('input', applyFilters);
+
+    // Back to top button
+    const toTop = document.getElementById('toTop');
+    window.addEventListener('scroll', () => {
+      toTop.style.display = window.scrollY > 600 ? 'block' : 'none';
+    });
+    toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
